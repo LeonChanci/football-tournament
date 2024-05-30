@@ -1,8 +1,16 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(
+    new ValidationPipe({
+     whitelist: true, //True, el validador eliminará el objeto validado de cualquier propiedad que no tenga decoradores.
+     forbidNonWhitelisted: true, //True, En lugar de eliminar las propiedades no incluidas en la lista blanca, el validador arrojará un error
+    }),
+  );
+
   await app.listen(3000);
 }
 bootstrap();

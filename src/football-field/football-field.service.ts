@@ -1,35 +1,48 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { CreateFootballFieldDTO } from './dto/create-football-field.dto';
+import { UpdateFootballFieldDTO } from './dto/update-football-field.dto';
+import { IFootballField } from 'src/football-field/interfaces/football-field.interface';
+import { InjectModel } from '@nestjs/mongoose';
+import { FOOTBALLFIELD } from 'src/common/models/models';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class FootballFieldService {
 
-    private footballFields = [
-        {
-            id: 1,
-            name: 'Cancha1',
-            type: 'Futbol 5'
-        },
-        {
-            id: 2,
-            name: 'Cancha2',
-            type: 'Futbol 7'
-        },
-        {
-            id: 3,
-            name: 'Cancha3',
-            type: 'Futbol 11'
-        },
-    ];
+    constructor(
+        @InjectModel(FOOTBALLFIELD.name) private readonly model: Model<IFootballField>,
+    ) {}
 
-    public findAll(): object[] {
-        return this.footballFields;
+    async create(footballFieldDTO: CreateFootballFieldDTO): Promise<IFootballField> {
+        const newFotballField = new this.model(footballFieldDTO);
+        return await newFotballField.save();
     }
 
-    public findOneById(id: number): object {
-        const footballField: object = this.footballFields.find(item => item.id === id);
+    async findAll(): Promise<IFootballField[]> {
+        return await this.model.find();
+    }
 
-        if(!footballField) throw new NotFoundException(`Foorball Field with id '${id}' not found`);
-
+    async findOneById(id: string): Promise<IFootballField> {
+        const footballField = await this.model.findById(id);
+        if (!footballField) throw new NotFoundException(`Football Field with id '${id}' not found`);
         return footballField;
+    }
+
+    async updateOneById(id: string, updateFootballFieldDTO: UpdateFootballFieldDTO): Promise<IFootballField> {
+        let footballFielUpdated = null;
+        if (this.findOneById(id)) {
+            return footballFielUpdated = await this.model.findByIdAndUpdate(id, updateFootballFieldDTO);
+        }
+        return footballFielUpdated;
+    }
+
+    async deleteOneById(id: string) {
+        if (this.findOneById(id)) {
+            this.model.findByIdAndDelete(id);
+        }
+        return {
+            status: HttpStatus.OK,
+            message: 'Delete Sucessfully',
+        };
     }
 }

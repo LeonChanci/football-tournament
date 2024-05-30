@@ -1,40 +1,39 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { FootballFieldService } from './football-field.service';
+import { CreateFootballFieldDTO } from './dto/create-football-field.dto';
+import { UpdateFootballFieldDTO } from './dto/update-football-field.dto';
 
-@Controller('football-field')
+@Controller('api/v1/football-field')
 export class FootballFieldController {
 
   constructor(
     private readonly footballFieldService: FootballFieldService
   ) {}
 
-  @Get('/getAllFootballFields')
-  getAllFootballFields(): object[] {
+  @Post('/create')
+  createFootballFiel(@Body() createFootballFieldDTO: CreateFootballFieldDTO) {
+    return this.footballFieldService.create(createFootballFieldDTO);
+  }
+
+  @Get('/getAll')
+  getAllFootballFields() {
     return this.footballFieldService.findAll();
   }
 
-  @Get('/getFootballField/:id')
-  getFootballFieldById(@Param('id', ParseIntPipe) id: number) {
+  @Get('/getOneById/:id')
+  getFootballFieldById(@Param('id') id: string) {
     return this.footballFieldService.findOneById(id);
   }
 
-  @Post()
-  createFootballFiel(@Body() body: any) {
-    return body;
-  }
-
-  @Patch(':id')
+  @Patch('/updateById/:id')
   updateFootballFiel(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() body: any) {
-    return body;
+    @Param('id') id: string,
+    @Body() updateFootballFieldDTO: UpdateFootballFieldDTO) {
+    return this.footballFieldService.updateOneById(id, updateFootballFieldDTO);
   }
 
-  @Delete(':id')
-  deleteFootballFiel(
-    @Param('id', ParseIntPipe) id: number) {
-    return {
-        id
-    };
+  @Delete('/deleteById/:id')
+  deleteFootballFiel(@Param('id') id: string) {
+    return this.footballFieldService.deleteOneById(id);
   }
 }
