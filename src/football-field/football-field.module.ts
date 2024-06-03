@@ -2,14 +2,14 @@ import { Module } from '@nestjs/common';
 import { FootballFieldController } from './football-field.controller';
 import { FootballFieldService } from './football-field.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { FOOTBALLFIELD } from '../common/models/models';
-import { FootballFieldShema } from './shema/football-field.shema';
+import { FootballFieldShema } from './entities/football-field.entity';
+import { FOOTBALL_FIELD } from 'src/common/models/models';
 
 @Module({
   imports: [
-    MongooseModule.forFeatureAsync([{
-      name: FOOTBALLFIELD.name,
-      useFactory:() => FootballFieldShema,
+    MongooseModule.forFeature([{
+      name: FOOTBALL_FIELD.name,
+      schema: FootballFieldShema
       },
     ]),
   ],

@@ -1,8 +1,20 @@
-import mongoose from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
-export class TypeFootballField {
+@Schema()
+export class TypeFootballField extends Document {
 
-    name: { type: String, required: true };
-    description: { type: String, required: true };
-
+    @Prop({
+        unique: true,
+        required: true,
+    })
+    name: string;
+    
+    @Prop({
+        unique: false,
+        required: true,
+    })
+    description: string;
 }
+
+export const TypeFootballFieldShema = SchemaFactory.createForClass( TypeFootballField );

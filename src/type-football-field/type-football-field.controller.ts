@@ -22,18 +22,18 @@ export class TypeFootballFieldController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.typeFootballFieldService.findOne(+id);
+    return this.typeFootballFieldService.findOne(id);
   }
 
   @Patch(':id')
   update(
     @Param('id') id: string, 
     @Body() updateTypeFootballFieldDto: UpdateTypeFootballFieldDto) {
-    return this.typeFootballFieldService.update(+id, updateTypeFootballFieldDto);
+    return this.typeFootballFieldService.update(id, updateTypeFootballFieldDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.typeFootballFieldService.remove(+id);
+    return this.typeFootballFieldService.remove(id);
   }
 }

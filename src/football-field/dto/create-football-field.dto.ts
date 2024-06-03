@@ -1,9 +1,10 @@
-import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, MinLength } from 'class-validator';
 
-export class CreateFootballFieldDTO {
+export class CreateFootballFieldDto {
 
     @IsNotEmpty()
     @IsString()
+    @MinLength(1)
     readonly name: string;
 
     @IsNotEmpty()
@@ -12,5 +13,6 @@ export class CreateFootballFieldDTO {
 
     @IsOptional()
     @IsString()
+    @MinLength(1)
     readonly address?: string;
 }

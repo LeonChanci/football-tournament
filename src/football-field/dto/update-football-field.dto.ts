@@ -1,16 +1,6 @@
-import { IsString, IsOptional } from 'class-validator';
+import { PartialType } from '@nestjs/mapped-types';
+import { CreateFootballFieldDto } from './create-football-field.dto';
 
-export class UpdateFootballFieldDTO {
-    
-    @IsOptional()
-    @IsString()
-    readonly name?: string;
+export class UpdateFootballFieldDTO  extends PartialType(CreateFootballFieldDto) {
 
-    @IsOptional()
-    @IsString()
-    readonly type?: string;
-
-    @IsOptional()
-    @IsString()
-    readonly address?: string;
 }

@@ -1,48 +1,67 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateFootballFieldDTO } from './dto/create-football-field.dto';
+import { BadRequestException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { CreateFootballFieldDto } from './dto/create-football-field.dto';
 import { UpdateFootballFieldDTO } from './dto/update-football-field.dto';
-import { IFootballField } from 'src/football-field/interfaces/football-field.interface';
+import { isValidObjectId, Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { FOOTBALLFIELD } from 'src/common/models/models';
-import { Model } from 'mongoose';
+import { FOOTBALL_FIELD } from 'src/common/models/models';
+import { FootballField } from './entities/football-field.entity';
 
 @Injectable()
 export class FootballFieldService {
 
     constructor(
-        @InjectModel(FOOTBALLFIELD.name) private readonly model: Model<IFootballField>,
+        @InjectModel(FOOTBALL_FIELD.name)
+        private readonly footballFieldModel: Model<FootballField>,
     ) {}
 
-    async create(footballFieldDTO: CreateFootballFieldDTO): Promise<IFootballField> {
-        const newFotballField = new this.model(footballFieldDTO);
-        return await newFotballField.save();
-    }
-
-    async findAll(): Promise<IFootballField[]> {
-        return await this.model.find();
-    }
-
-    async findOneById(id: string): Promise<IFootballField> {
-        const footballField = await this.model.findById(id);
-        if (!footballField) throw new NotFoundException(`Football Field with id '${id}' not found`);
-        return footballField;
-    }
-
-    async updateOneById(id: string, updateFootballFieldDTO: UpdateFootballFieldDTO): Promise<IFootballField> {
-        let footballFielUpdated = null;
-        if (this.findOneById(id)) {
-            return footballFielUpdated = await this.model.findByIdAndUpdate(id, updateFootballFieldDTO);
+    async create(footballFieldDTO: CreateFootballFieldDto): Promise<FootballField> {
+        try {
+            const newFootballField = await this.footballFieldModel.create(footballFieldDTO);
+            return newFootballField;
+        } catch ( error ) {
+            this.handleException(error);
         }
-        return footballFielUpdated;
     }
 
-    async deleteOneById(id: string) {
-        if (this.findOneById(id)) {
-            this.model.findByIdAndDelete(id);
+    async findAll(): Promise<FootballField[]> {
+        return await this.footballFieldModel.find();
+    }
+
+    async findOne(id: string): Promise<FootballField> {
+        let footballField: FootballField = await this.footballFieldModel.findById(id);
+        if (isValidObjectId(id)) {
+            return footballField;
+        } else {
+            throw new NotFoundException(`Football Field with id '${id}' not found`);
         }
+    }
+
+    async update(id: string, updateFootballFieldDTO: UpdateFootballFieldDTO): Promise<FootballField> {
+        try {
+            const footballField: FootballField = await this.findOne(id);  
+            if (footballField) {
+                await footballField.updateOne(updateFootballFieldDTO);
+                return {...footballField.toJSON(), ...updateFootballFieldDTO};
+            }
+        } catch ( error ) {
+            this.handleException(error);
+        }
+    }
+
+    async delete(id: string) {
+        const footballField = await this.findOne(id);
+        await footballField.deleteOne();
         return {
             status: HttpStatus.OK,
             message: 'Delete Sucessfully',
         };
+    }
+
+    private handleException(error: any) {
+        if ( error.code === 11000 ) {
+            throw new BadRequestException(`The Football Field is already exist ${ JSON.stringify( error.keyValue ) }`);
+        }
+        console.log(error);
+        throw new InternalServerErrorException(`Could not be performed with Football Field - Check Server Logs`);
     }
 }

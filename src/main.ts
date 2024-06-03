@@ -10,7 +10,8 @@ async function bootstrap() {
      forbidNonWhitelisted: true, //True, En lugar de eliminar las propiedades no incluidas en la lista blanca, el validador arrojará un error
     }),
   );
-
+  //Prefijo de la applicación
+  app.setGlobalPrefix('api/v1/')
   await app.listen(3000);
 }
 bootstrap();
