@@ -3,14 +3,14 @@ import { CreateFootballFieldDto } from './dto/create-football-field.dto';
 import { UpdateFootballFieldDTO } from './dto/update-football-field.dto';
 import { isValidObjectId, Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { FOOTBALL_FIELD } from 'src/common/models/models';
+
 import { FootballField } from './entities/football-field.entity';
 
 @Injectable()
 export class FootballFieldService {
 
     constructor(
-        @InjectModel(FOOTBALL_FIELD.name)
+        @InjectModel(FootballField.name)
         private readonly footballFieldModel: Model<FootballField>,
     ) {}
 
@@ -53,7 +53,7 @@ export class FootballFieldService {
         await footballField.deleteOne();
         return {
             status: HttpStatus.OK,
-            message: 'Delete Sucessfully',
+            message: 'Delete Sucessfully'
         };
     }
 
