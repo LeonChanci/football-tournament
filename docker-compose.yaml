@@ -2,12 +2,22 @@
   version: '3'
 
   services: 
-    db:
+    mongo-db-dev:
+      image: mongo:7
+      restart: always
+      ports:
+        - 27019:27019
+      environment:
+        MONGODB_DATABASE: football-tournament
+      volumes:
+        - ./mongo:/data/db
+
+    mongo-db-dev-e2e:
       image: mongo:7
       restart: always
       ports:
         - 27017:27017
       environment:
-        MONGODB_DATABASE: football-tournament
+        MONGODB_DATABASE: football-tournament-e2e
       volumes:
-        - ./mongo:/data/db
+        - ./mongoe2e:/data/db
