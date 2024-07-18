@@ -57,11 +57,10 @@ export class FootballFieldService {
         };
     }
 
-    private handleException(error: any) {
+    public handleException(error: any) {
         if ( error.code === 11000 ) {
             throw new BadRequestException(`The Football Field is already exist ${ JSON.stringify( error.keyValue ) }`);
         }
-        console.log(error);
         throw new InternalServerErrorException(`Could not be performed with Football Field - Check Server Logs`);
     }
 }
