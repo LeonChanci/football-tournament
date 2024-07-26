@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { TypeFootballFieldModule } from './type-football-field/type-football-field.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { CommonModule } from './common/common.module';
 
 
 @Module({
@@ -20,11 +21,11 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     }),
 
     MongooseModule.forRoot(
-      //process.env.URI_MONGODB_ATLAS
-      process.env.URI_MONGODB_DOCKER
+      process.env.URI_MONGODB_ATLAS
+      //process.env.URI_MONGODB_DOCKER
     ), 
 
-    FootballFieldModule, TypeFootballFieldModule
+    FootballFieldModule, TypeFootballFieldModule, CommonModule
   ],
 })
 export class AppModule {}

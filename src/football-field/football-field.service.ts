@@ -49,8 +49,10 @@ export class FootballFieldService {
     }
 
     async delete(id: string) {
-        const footballField = await this.findOne(id);
-        await footballField.deleteOne();
+        const {deletedCount, acknowledged} = await this.footballFieldModel.deleteOne({_id: id});
+        if (deletedCount === 0) {
+            throw new BadRequestException(`The Football Field with id "${id}" not found`);
+        }
         return {
             status: HttpStatus.OK,
             message: 'Delete Sucessfully'

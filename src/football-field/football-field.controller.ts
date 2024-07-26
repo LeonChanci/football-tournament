@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/commo
 import { FootballFieldService } from './football-field.service';
 import { CreateFootballFieldDto } from './dto/create-football-field.dto';
 import { UpdateFootballFieldDTO } from './dto/update-football-field.dto';
+import { ParseMongoIdPipe } from '../common/pipes/parse-mongo-id/parse-mongo-id.pipe';
 
 @Controller('football-field')
 export class FootballFieldController {
@@ -21,7 +22,7 @@ export class FootballFieldController {
   }
 
   @Get('/getOneById/:id')
-  getFootballFieldById(@Param('id') id: string) {
+  getFootballFieldById(@Param('id', ParseMongoIdPipe) id: string) {
     return this.footballFieldService.findOne(id);
   }
 
@@ -33,7 +34,7 @@ export class FootballFieldController {
   }
 
   @Delete('/deleteById/:id')
-  deleteFootballFiel(@Param('id') id: string) {
+  deleteFootballFiel(@Param('id', ParseMongoIdPipe) id: string) {
     return this.footballFieldService.delete(id);
   }
 }

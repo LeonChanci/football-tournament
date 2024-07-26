@@ -15,6 +15,7 @@ describe('FootballFieldService', () => {
         updateOne: jest.fn(),
         findById: jest.fn(),
         isValidObjectId: jest.fn(),
+        deleteOne: jest.fn(),
       };
 
     beforeEach(async() => {
@@ -47,10 +48,14 @@ describe('FootballFieldService', () => {
             expect(result).toEqual(footballField);
         });
 
+        let footballFieldNull = {
+            'name': null,
+            'type': null,
+        };
         it('Debe devolver una Excepcion InternalServerErrorException', async () => {
             mockModel.create.mockResolvedValue(new InternalServerErrorException);
             try {
-                await footballFieldService.create(footballField);
+                await footballFieldService.create(footballFieldNull);
             } catch (error) {
                 expect(error).toBeInstanceOf(InternalServerErrorException);
                 expect(footballFieldService.handleException(1)).toBe(InternalServerErrorException);
@@ -120,6 +125,32 @@ describe('FootballFieldService', () => {
         });
     });
 
+    describe('deleteFootballField', () => {
+        let result = {
+            'deletedCount': 1,
+            'acknowledged': true
+        };
+
+        let resultNot = {
+            'deletedCount': 0,
+            'acknowledged': false
+        };
+        
+        it('Debe elminar una Cancha de Futbol', async () => {
+            mockModel.deleteOne.mockResolvedValue(result);
+            const response = await footballFieldService.delete("1");
+            expect(response.message).toEqual("Delete Sucessfully");
+        });
+
+        it('Debe devolver una Exceptiom NotFoundException, no eliminó Cancha de Futbol', async () => {
+            mockModel.deleteOne.mockResolvedValue(resultNot);
+            try {
+                await footballFieldService.delete("1"); 
+            } catch (error) {
+                expect(error).toBeInstanceOf(BadRequestException);
+            }
+        });
+    });
 
     describe('handleException', () => {
         let error: any = {
